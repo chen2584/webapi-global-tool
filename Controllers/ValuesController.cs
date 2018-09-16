@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,9 +14,14 @@ namespace WebApiGlobalTool.Controllers
     {
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<ActionResult<string>> GetAsync()
         {
-            return new string[] { "value1", "value2" };
+            var assembly = Assembly.GetEntryAssembly();
+            var resource = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.data.dummy.json");
+            using (StreamReader reader = new StreamReader(resource))
+            {
+                return await reader.ReadToEndAsync();
+            }
         }
 
         // GET api/values/5
